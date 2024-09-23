@@ -19,12 +19,12 @@ num_genomes = len(genomes)
 ref_index = genomes.index("GCA_006494835.1_ASM649483v1")
 ref_sequence = dna_seqs[ref_index]
 
-#end_index is the length of the gene, not len-1. It's 476, not 475
+#end_index is the length of the gene, not len-1.
 def find_insertions(gene_name, start_index, end_index, reverse_orient):
 	seqs_without_insertions = [""] * num_genomes
-	#UNCOMMENT THIS
-	#alignment_without_insertions = open("alignment_no_insertions_" + gene_name + ".afa", "w")
-	#insertions_file = open("insertions_" + gene_name + ".txt", "w")
+	
+	alignment_without_insertions = open("alignment_no_insertions_" + gene_name + ".afa", "w")
+	insertions_file = open("insertions_" + gene_name + ".txt", "w")
 
 	#The keys are the indices of the insertions, the values are a list of genomes that have an insertion there
 	#The index is relative to the beginning of the gene whether the gene is in forward or reverse orientation. It's 0-indexed
@@ -42,14 +42,9 @@ def find_insertions(gene_name, start_index, end_index, reverse_orient):
 		#TEMP CODE FOR FINDING EF1291 POSITIONS
 		positions2 = [12903, 13005, 12900, 12914, 12919, 12932, 12937, 12939, 12954, 12957, 12960, 12965, 12966, 12967, 12969, 12972, 12979, 12982, 12990, 12994, 12996, 13008, 13017, 13028, 13029, 13057, 13024, 13066, 12902, 12951, 12952, 12962, 12981, 12899, 13070, 12948, 12963, 12906, 12964, 13002, 13041, 13038, 13074, 13064, 12907, 12921, 12923, 12929, 12935, 12985, 12987, 12988, 12992, 12998, 12999, 13003, 13012, 13025, 13030, 13053, 13056, 13068, 13072, 12995, 13011, 13014, 13065]
 		positions3 = [12903, 13005, 12900, 12914, 12919, 12932, 12937, 12939, 12954, 12957, 12960, 12965, 12966, 12967, 12969, 12972, 12979, 12982, 12990, 12994, 12996, 13008, 13017, 13028, 13029, 13057, 13024, 13066, 12902, 12951, 12952, 12962, 12981, 12899, 13070, 12948, 12963, 12906, 12964, 13002, 13041, 13038, 13074, 13064, 12907, 12921, 12923, 12929, 12935, 12985, 12987, 12988, 12992, 12998, 12999, 13003, 13012, 13025, 13030, 13053, 13056, 13068, 13072, 12995, 13011, 13014, 13065]
-		#print(sorted(positions2))
-		#positions2 = [12954]
 		
-		for i in positions2:
-			print("Position", str(i) + ":", ref_sequence[i])
-		#print(ref_sequence[12950:12959])
-		#print("Num dashes before the first position:", ref_sequence[start_index:12950].count("-"))
-		#print(ref_sequence[start_index:12951])
+		#for i in positions2:
+		#	print("Position", str(i) + ":", ref_sequence[i])
 		
 	#Looking for insertions and deleting gapped columns during this loop
 	#As it writes the first gene to seqs_without_insertions, the sequences are reversed
@@ -103,22 +98,15 @@ def find_insertions(gene_name, start_index, end_index, reverse_orient):
 						#insertions[position+dash_index].append(genomes[i])
 					else:
 						print("Position", position+dash_index, "is a dash in the reference sequence, but in genome", genomes[i], "it's neither -, A, C, G, or T")
-				#print("Write to alignment file the subsequence with starting coordinate", position)
 				seqs_without_insertions[i] += dna_seqs[i][position:position+dash_index]
-		
-		#if dash_index != 0:
-		#	print("Adding", dna_seqs[ref_index][position:position+dash_index], "to ref seq without insertions")
 
 		gene = gene[dash_index + 1:]
 		position += dash_index + 1
 		
 		#TEMP CODE FOR FINDING EF1291 POSITIONS		
-		#print("Dash index is", dash_index)
-		#print("Position is", position)
 		for i in range(len(positions2)):
 			if positions2[i] > position:
 				positions3[i] -= 1
-				#print(positions2[i] + 1, "is now", positions2[i])
 
 		if reverse_orient:
 			insertions[position - 1] = []
@@ -126,11 +114,6 @@ def find_insertions(gene_name, start_index, end_index, reverse_orient):
 			#insertions[end_index-position] = []
 	
 	#Doing the same steps for the sequence after the last dash, as the loop terminates when it sees the last dash
-	#print("End index:", end_index)
-	#print("position:", position)
-	#print("position_after_dash:", position_after_dash)
-	#print("dash_index:", dash_index)
-	#print(position_after_dash-dash_index)
 	position_after_dash = end_index-1-position
 	#Testing if all the dashes have been written to insertions
 	#if reverse_orient:
@@ -175,7 +158,6 @@ def find_insertions(gene_name, start_index, end_index, reverse_orient):
 	print(ref_sequence[start_index:end_index])
 	print(ref_sequence[start_index:end_index].replace("-", ""))
 	print(seqs_without_insertions[ref_index])"""
-	sys.exit()
 
 
 	#Writing to files
@@ -193,7 +175,7 @@ def find_insertions(gene_name, start_index, end_index, reverse_orient):
 	if all_zero:
 		insertions_file.write("No insertions found!")
 
-"""find_insertions("EF1276", 0, 476, True)
+find_insertions("EF1276", 0, 476, True)
 find_insertions("EF1277", 539, 1024, True)
 find_insertions("EF1278", 1248, 1384, False)
 find_insertions("EF1279", 1414, 2199, False)
@@ -207,7 +189,7 @@ find_insertions("EF1286", 5188, 5550, False)
 find_insertions("EF1287", 5567, 5937, False)
 find_insertions("EF1288", 5925, 8905, False)
 find_insertions("EF1289", 8906, 9833, False)
-find_insertions("EF1290", 9849, 11312, False)"""
+find_insertions("EF1290", 9849, 11312, False)
 find_insertions("EF1291", 11344, 13135, False)
-#find_insertions("EF1292", 13158, 13554, False)
-#find_insertions("EF1293", 13699, 14798, False)
+find_insertions("EF1292", 13158, 13554, False)
+find_insertions("EF1293", 13699, 14798, False)
